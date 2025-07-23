@@ -1,104 +1,76 @@
-# FootballMvp
+FootballMVP
+An analytics program to find the top-performing players (MVPs) in football leagues and tournaments.
 
-This is an analytical program that determines top performing players in football leagues and tournaments.
+What is Soccer MVP Analyzer?
+This project calculates the Most Valuable Player (MVP) for professional football leagues and tournaments using player performance statistics.
 
----
+Think of it as a custom analytics engine that scrapes, cleans, processes, and visualizes soccer player data to answer:
 
-## Soccer MVP Analyzer
+"Who’s really been the MVP this season?"
 
-This project calculates the **Most Valuable Player (MVP)** for professional football leagues and tournaments using player performance statistics.
+Getting Started
+1. Clone the Project
+Choose your workflow:
 
-You can think of it as a custom-built analytics engine that scrapes, cleans, processes, and visualizes soccer player data to answer the question:
-**"Who’s really been the MVP this season?"**
+Option A: Clone (For engineers)
+git clone https://github.com/YOUR_USERNAME/FootballMVPAPI.git
 
----
 
-## Getting Started
+Option B: Fork (For contributors)
+Fork the repo on GitHub, then clone your fork:
+git clone https://github.com/YOUR_USERNAME/FootballMVPAPI.git
 
-### 1. Clone the project
 
-**Repo Access Methods:**
+Option C: Install via pip (For developers)
+pip install FootballMVPAPI
+pip install -r requirements.txt
+python mvp_comp_dir/mvp_comp_compute.py
 
-* **Workflow Type A - Clone (Engineer):**
 
-  ```bash
-  git clone https://github.com/YOUR_USERNAME/FootballMVPAPI.git
-  ```
-
-* **Workflow Type B - Fork (Contributor):**
-
-  ```bash
-  git fork https://github.com/YOUR_USERNAME/FootballMVPAPI.git
-  ```
-
-* **Workflow Type C - Pip Install (Developer):**
-
-  ```bash
-  pip install FootballMVPAPI
-  pip install -r requirements.txt
-  python mvp_comp_dir/mvp_comp_compute.py
-  ```
-
----
-
-### 2. Environment Setup
-
-**Python 3.12 Required**
+2. Setup Your Environment
+Python Version: 3.12 (Required)
 
 Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
-
-**Using pyenv (Recommended):**
-
-```bash
+Using pyenv (recommended):
 pyenv install 3.12.4
 pyenv virtualenv 3.12.4 soccer-mvp-env
 pyenv activate soccer-mvp-env
 pip install -r requirements.txt
-```
-
-**Troubleshooting:**
-If you hit a `ModuleNotFoundError: No module named 'distutils'`, run:
-
-```bash
+Troubleshooting:
+If you see ModuleNotFoundError: No module named 'distutils', run:
 pip install setuptools
-```
 
-**Install Java**
-### Install Java
-/*brew install openjdk@11*/
 
-### Check Version
-/*java --version */
+3. Install Java (Needed for PySpark)
+Install Java 11:
+brew install openjdk@11
+Verify Java version:
+java --version
+Link Java with Homebrew:
 
-### Link Java and Homebrew
-/*sudo ln -sfn /opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk*/
 
-### Add this to .zhsrc or .bashrc file
-/*# Pyenv setup
+sudo ln -sfn /opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+Add to your shell config (.zshrc or .bashrc):
+
+---
+
+Pyenv setup
 export PYENV_ROOT="$HOME/.pyenv"
 export PATH="$PYENV_ROOT/bin:$PATH"
 
-##### Initialize pyenv and pyenv-virtualenv
+Initialize pyenv and pyenv-virtualenv
 eval "$(pyenv init --path)"
-eval "$(pyenv init -)"  
+eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
-##### Java setup for PySpark - force Java 11
+Java setup for PySpark (force Java 11)
 export JAVA_HOME="/opt/homebrew/opt/openjdk@11"
 export PATH="$JAVA_HOME/bin:$PATH"
-*/
-
-# Then apply the content from you .zshrc file
-/*source ~/.zshrc*/
+Reload your shell:
 
 
-
-### Install distutils
-/*pip install setuptools*/
+source ~/.zshrc
 
 
 ---
