@@ -1,9 +1,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="FootballMVP",
+    name="footballmvp",  # lowercase recommended
     version="0.1.0",
-    packages=find_packages(),
+    package_dir={"": "src"},             # tell setuptools to look in src/
+    packages=find_packages(where="src"),  # find packages only under src/
     install_requires=[
         "requests>=2.32",
         "pandas>=2.2",
