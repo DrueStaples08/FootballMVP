@@ -1,4 +1,8 @@
 from setuptools import setup, find_packages
+from pathlib import Path
+
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
 
 setup(
     name="footballmvp",  # lowercase recommended
@@ -16,6 +20,8 @@ setup(
     author="Drue Staples",
     author_email="druestaples@gmail.com",
     description="Analytical tool to determine top performing football players (MVP) across leagues and tournaments.",
+    long_description=long_description,                     # <-- Add this
+    long_description_content_type='text/markdown',         # <-- And this for Markdown
     url="https://github.com/DrueStaples08/FootballMVP",
     classifiers=[
         "Programming Language :: Python :: 3.12",
