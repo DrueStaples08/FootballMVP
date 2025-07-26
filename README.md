@@ -22,9 +22,9 @@ git clone https://github.com/YOUR_USERNAME/FootballMVPAPI.git
 
 
 Option C: Install via pip (For developers)
-pip install FootballMVPAPI
+pip install FootballMVP
 pip install -r requirements.txt
-python mvp_comp_dir/mvp_comp_compute.py
+python mvp_comp_dir/mvp_run.py
 
 
 2. Setup Your Environment
