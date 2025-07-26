@@ -29,6 +29,19 @@ import logging
 
 
 
+from pyspark.sql import SparkSession, functions as F
+from pyspark.sql.window import Window
+from pyspark.sql.functions import desc
+
+import json
+import re
+import time
+from typing import List, Dict
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from bs4 import BeautifulSoup
+
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -582,15 +595,6 @@ class Match:
 
 
     def extract_single_match_players_stats(self, url: str, fallback:bool=False) -> List[Dict]:
-        import json
-        import re
-        import logging
-        import time
-        from typing import List, Dict
-        from selenium import webdriver
-        from selenium.webdriver.chrome.options import Options
-        from bs4 import BeautifulSoup
-
         options = Options()
         options.add_argument("--headless")
         driver = webdriver.Chrome(options=options)
@@ -812,9 +816,6 @@ class Player:
 
 
     def competition_analysis(self, competition_name: str, competition_year: str, open_close_league:str="", manual_competition_id:str="")->None:
-        from pyspark.sql import SparkSession, functions as F
-        from pyspark.sql.window import Window
-        from pyspark.sql.functions import desc
         """
         Analyzes player statistics by computing matches played and average SPI score,
         and fills missing player details (team, number, country) using mode values.
@@ -1154,19 +1155,19 @@ def workflow_compute_mvp(competition_name: str, competition_year: int, scalar: i
 
 
 # if __name__ == "__main__":
-#     # Workflow 1A - add a competetion
+# #     # Workflow 1A - add a competetion
 #     all_comps = AllCompetitions()
 #     all_comp_info = all_comps.gather_all_competition_ids("https://www.fotmob.com/") # run
 #     print(all_comp_info)
 
-#     # Sample Test 1
+# #     # Sample Test 1
 #     print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
 #     print(workflow_compute_mvp(competition_name="fifa-intercontinental-cup", competition_year="2024", scalar=14))
 
-#     # Sample Test 2
-#     print(all_comps.add_competition_to_my_watchlist(competition_name="world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/77/matches/world-cup"))#     # print(workflow_compute_mvp(competition_name="world-cup", competition_year="2010", manual_competition_id="77", scalar=14, min_req_matches=False))
-#     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2014", manual_competition_id="77", scalar=14, min_req_matches=False))
-#     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2018", manual_competition_id="77", scalar=14))
-#     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2022", manual_competition_id="77", scalar=14))
+# #     # Sample Test 2
+# #     print(all_comps.add_competition_to_my_watchlist(competition_name="world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/77/matches/world-cup"))#     # print(workflow_compute_mvp(competition_name="world-cup", competition_year="2010", manual_competition_id="77", scalar=14, min_req_matches=False))
+# #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2014", manual_competition_id="77", scalar=14, min_req_matches=False))
+# #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2018", manual_competition_id="77", scalar=14))
+# #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2022", manual_competition_id="77", scalar=14))
 
 
