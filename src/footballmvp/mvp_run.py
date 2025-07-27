@@ -1154,22 +1154,22 @@ def workflow_compute_mvp(competition_name: str, competition_year: int, scalar: i
 
 
 
-if __name__ == "__main__":
-#     # Workflow 1A - add a competetion
-    all_comps = AllCompetitions()
-    all_comp_info = all_comps.gather_all_competition_ids("https://www.fotmob.com/") # run
-    print(all_comp_info)
+# if __name__ == "__main__":
+# #     # Workflow 1A - add a competetion
+#     all_comps = AllCompetitions()
+#     all_comp_info = all_comps.gather_all_competition_ids("https://www.fotmob.com/") # run
+#     print(all_comp_info)
 
-#     # Sample Test 1
-    # print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
-    # print(workflow_compute_mvp(competition_name="fifa-intercontinental-cup", competition_year="2024", scalar=14))
+# #     # Sample Test 1
+#     # print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
+#     # print(workflow_compute_mvp(competition_name="fifa-intercontinental-cup", competition_year="2024", scalar=14))
 
-#     # Sample Test 2
-#     print(all_comps.add_competition_to_my_watchlist(competition_name="world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/77/matches/world-cup"))#     # print(workflow_compute_mvp(competition_name="world-cup", competition_year="2010", manual_competition_id="77", scalar=14, min_req_matches=False))
-#     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2014", manual_competition_id="77", scalar=14, min_req_matches=False))
-#     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2018", manual_competition_id="77", scalar=14))
-#     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2022", manual_competition_id="77", scalar=14))
+# #     # Sample Test 2
+# #     print(all_comps.add_competition_to_my_watchlist(competition_name="world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/77/matches/world-cup"))#     # print(workflow_compute_mvp(competition_name="world-cup", competition_year="2010", manual_competition_id="77", scalar=14, min_req_matches=False))
+# #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2014", manual_competition_id="77", scalar=14, min_req_matches=False))
+# #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2018", manual_competition_id="77", scalar=14))
+# #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2022", manual_competition_id="77", scalar=14))
 
-    print(all_comps.add_competition_to_my_watchlist(competition_name="mls", gather_all_competition_ids=all_comp_info))
-    print(workflow_compute_mvp(competition_name="mls", competition_year="2025", scalar=4))
+#     print(all_comps.add_competition_to_my_watchlist(competition_name="mls", gather_all_competition_ids=all_comp_info))
+#     print(workflow_compute_mvp(competition_name="mls", competition_year="2025", scalar=4))
 
