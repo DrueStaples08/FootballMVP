@@ -12,13 +12,13 @@ Getting Started
 1. Clone the Project
 Choose your workflow:
 
-Option A: Clone (For engineers)
-git clone https://github.com/YOUR_USERNAME/FootballMVPAPI.git
+Option A: Clone (For contributors)
+git clone https://github.com/DrueStaples08/FootballMVP
 
 
 Option B: Fork (For contributors)
 Fork the repo on GitHub, then clone your fork:
-git clone https://github.com/YOUR_USERNAME/FootballMVPAPI.git
+git clone https://github.com/DrueStaples08/FootballMVP
 
 
 Option C: Install via pip (For developers)
