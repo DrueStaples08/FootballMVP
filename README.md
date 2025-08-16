@@ -43,14 +43,14 @@ pip install setuptools
 
 
 3. Install Java (Needed for PySpark)
-Install Java 11:
-brew install openjdk@11
+Install Java 17:
+brew install openjdk@17
 Verify Java version:
 java --version
 Link Java with Homebrew:
 
 
-sudo ln -sfn /opt/homebrew/opt/openjdk@11/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-11.jdk
+sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
 Add to your shell config (.zshrc or .bashrc):
 
 ---
@@ -64,7 +64,7 @@ eval "$(pyenv init --path)"
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
-Java setup for PySpark (force Java 11)
+Java setup for PySpark (force Java 17)
 export JAVA_HOME="/opt/homebrew/opt/openjdk@11"
 export PATH="$JAVA_HOME/bin:$PATH"
 Reload your shell:
@@ -162,119 +162,152 @@ print(all_comps.add_competition_to_my_watchlist(competition_name="", gather_all_
 print(workflow_compute_mvp(competition_name="premier-league", competition_year="2019", manual_competition_id="9986"))
 ```
 
-### Sample Code:
-    - Add Competitions:
+## Sample Code:
 
-        - Internationianl - Countries
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="concacaf-gold-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/298/matches/concacaf-gold-cup"))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="euro", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="concacaf-nations-league", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-a", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-b", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-c", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-d", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="copa-america", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="summer-olympics", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/77/matches/world-cup"))
+### Add Competitions to Watchlist
+
+#### International - Countries
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="concacaf-gold-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/298/matches/concacaf-gold-cup"))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="euro", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="concacaf-nations-league", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-a", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-b", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-c", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="uefa-nations-league-d", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="copa-america", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="summer-olympics", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/77/matches/world-cup"))`
+
+#### International - Clubs
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-club-world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/78/matches/fifa-club-world-cup"))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="europa-league", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="afc-champions-league-elite", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="champions-league", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="concacaf-champions-cup", gather_all_competition_ids=all_comp_info))`
+
+#### Countries
+
+##### Austria
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="bundesliga", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/38/matches/bundesliga"))`
+
+##### Canada
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="canadian-championship", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="premier-league", gather_all_competition_ids=all_comp_info))`
+
+##### England
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/47/matches/premier-league"))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/9986/matches/premier-league"))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="fa-cup", gather_all_competition_ids=all_comp_info))`
+
+##### France
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="ligue-1", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="coupe-de-france", gather_all_competition_ids=all_comp_info))`
+
+##### Germany
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="bundesliga", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/54/matches/bundesliga"))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="dfb-pokal", gather_all_competition_ids=all_comp_info))`
+
+##### Italy
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="serie", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/55/matches/serie"))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="coppa-italia", gather_all_competition_ids=all_comp_info))`
+
+##### Mexico
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="liga-mx", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/230/matches/liga-mx"))`
+
+##### Netherlands
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="eredivisie", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/57/matches"))`
+
+##### Saudi Arabia
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="saudi-pro-league", gather_all_competition_ids=all_comp_info))`
+
+##### Scotland
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="premiership", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/64/matches"))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))`
+
+##### Spain
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="laliga", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="copa-del-rey", gather_all_competition_ids=all_comp_info))`
+
+##### USA
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="mls", gather_all_competition_ids=all_comp_info))`
+- `print(all_comps.add_competition_to_my_watchlist(competition_name="open-cup", gather_all_competition_ids=all_comp_info))`
 
 
-        - International - Clubs
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="europa-league", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/78/matches/fifa-club-world-cup"))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="afc-champions-league-elite", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="champions-league", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="concacaf-champions-cup", gather_all_competition_ids=all_comp_info))
-            - print(all_comps.add_competition_to_my_watchlist(competition_name="concacaf-gold-cup", gather_all_competition_ids=all_comp_info))
-
-        - Countries
-            - Austria 
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="eredivisie", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/38/matches/bundesliga"))
-            - Canada
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="canadian-championship", gather_all_competition_ids=all_comp_info))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="premier-league", gather_all_competition_ids=all_comp_info))
-            - England
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/47/matches/premier-league"))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/9986/matches/premier-league"))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="fa-cup", gather_all_competition_ids=all_comp_info))
-            - France 
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="ligue-1", gather_all_competition_ids=all_comp_info))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="coupe-de-france", gather_all_competition_ids=all_comp_info))
-            - Germany
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="bundesliga", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/54/matches/bundesliga"))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="dfb-pokal", gather_all_competition_ids=all_comp_info))
-            - Italy 
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="serie", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/55/matches/serie"))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="coppa-italia", gather_all_competition_ids=all_comp_info))
-            - Mexico
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="liga-mx", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/230/matches/liga-mx"))
-            - Netherlands
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="eredivisie", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/57/matches"))
-            - Saudi Arabia
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="saudi-pro-league", gather_all_competition_ids=all_comp_info))
-            - Scotland
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="premiership", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/64/matches"))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
-            - Spain
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="laliga", gather_all_competition_ids=all_comp_info))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="copa-del-rey", gather_all_competition_ids=all_comp_info))
-            - USA
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="mls", gather_all_competition_ids=all_comp_info))
-                - print(all_comps.add_competition_to_my_watchlist(competition_name="open-cup", gather_all_competition_ids=all_comp_info))
 
 
-    - Run MVP Program:
-        - International - Countries
-            - print(workflow_compute_mvp(competition_name="concacaf-gold-cup", competition_year="2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="euro", competition_year="2024", scalar=14))
-            - print(workflow_compute_mvp(competition_name="concacaf-nations-league", competition_year="2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="uefa-nations-league-a", competition_year="2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="uefa-nations-league-b", competition_year="2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="uefa-nations-league-c", competition_year="2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="uefa-nations-league-d",competition_year= "2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="copa-america", competition_year="2024", scalar=14))
-            - print(workflow_compute_mvp(competition_name="summer-olympics", competition_year="2024", scalar=14))
-            - print(workflow_compute_mvp(competition_name="world-cup", competition_year="2022", manual_competition_id="77", scalar=14))
 
-        - International - Clubs
-            - print(workflow_compute_mvp(competition_name="fifa-club-world-cup", competition_year="2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="europa-league", competition_year="2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="afc-champions-league-elite", competition_year="2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="champions-league", competition_year="2024-2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="concacaf-champions-cup", competition_year="2025", scalar=14))
-            - print(workflow_compute_mvp(competition_name="concacaf-gold-cup", competition_year="2025", scalar=14))
-        - Countries:
-            - Austria
-                - print(workflow_compute_mvp(competition_name="eredivisie", competition_year="2024-2025")) 
-            - Canada
-                - print(workflow_compute_mvp(competition_name="canadian-championship", competition_year="2025", scalar=14))
-                - print(workflow_compute_mvp(competition_name="premier-league", competition_year="2025", manual_competition_id="9986"))
-            - England
-                - print(workflow_compute_mvp(competition_name="premier-league", competition_year="2024-2025", manual_competition_id="47"))
-                - print(workflow_compute_mvp(competition_name="fa-cup", competition_year="2024-2025", scalar=14))
-            - France
-                - print(workflow_compute_mvp(competition_name="ligue-1", competition_year="2024-2025", manual_competition_id="53"))
-                - print(workflow_compute_mvp(competition_name="coupe-de-france", competition_year="2024-2025", scalar=14))
-            - Germany
-                - print(workflow_compute_mvp(competition_name="bundesliga", competition_year="2024-2025", manual_competition_id="54"))
-                - print(workflow_compute_mvp(competition_name="dfb-pokal", competition_year="2024-2025", scalar=14))
-            - Italy
-                - print(mvp.compute_mvp(competition_name="serie", competition_year="2024-2025", manual_competition_id="55")) 
-                - print(workflow_compute_mvp(competition_name="coppa-italia", competition_year="2024-2025", scalar=14))
-            - Mexico
-                - print(workflow_compute_mvp(competition_name="liga-mx", competition_year="2023-2024", open_close_league="Apertura")) 
-                - print(workflow_compute_mvp(competition_name="liga-mx", competition_year="2023-2024", open_close_league="Clausura")) 
-            - Netherlands
-                - print(workflow_compute_mvp(competition_name="eredivisie", competition_year="2024-2025", manual_competition_id="57"))  
-            - Saudi Arabia
-                - print(workflow_compute_mvp(competition_name="saudi-pro-league", competition_year="2024-2025"))        
-            - Scotland
-                - print(workflow_compute_mvp(competition_name="premiership", competition_year="2024-2025"))             
-            - Spain
-                - print(workflow_compute_mvp(competition_name="laliga", competition_year="2024-2025"))   
-                - print(workflow_compute_mvp(competition_name="copa-del-rey", competition_year="2024-2025", scalar=14))         
-            - USA
-                - print(workflow_compute_mvp(competition_name="open-cup", competition_year="2025", scalar=14))
-                - print(workflow_compute_mvp(competition_name="mls", competition_year="2025"))        
-            
+### Run MVP Program
+
+#### International - Clubs
+- `print(workflow_compute_mvp(competition_name="fifa-intercontinental-cup", competition_year="2024", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="fifa-club-world-cup", competition_year="2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="europa-league", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="afc-champions-league-elite", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="champions-league", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="concacaf-champions-cup", competition_year="2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="concacaf-gold-cup", competition_year="2025", scalar=14))`
+
+#### International - Countries
+- `print(workflow_compute_mvp(competition_name="concacaf-gold-cup", competition_year="2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="euro", competition_year="2024", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="concacaf-nations-league", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="uefa-nations-league-a", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="uefa-nations-league-b", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="uefa-nations-league-c", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="uefa-nations-league-d", competition_year="2024-2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="copa-america", competition_year="2024", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="summer-olympics", competition_year="2024", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="world-cup", competition_year="2022", manual_competition_id="77", scalar=14))`
+
+#### Countries
+
+##### Austria
+- `print(workflow_compute_mvp(competition_name="bundesliga", competition_year="2024-2025"))`
+
+##### Canada
+- `print(workflow_compute_mvp(competition_name="canadian-championship", competition_year="2025", scalar=14))`
+- `print(workflow_compute_mvp(competition_name="premier-league", competition_year="2025", manual_competition_id="9986"))`
+
+##### England
+- `print(workflow_compute_mvp(competition_name="premier-league", competition_year="2024-2025", manual_competition_id="47"))`
+- `print(workflow_compute_mvp(competition_name="fa-cup", competition_year="2024-2025", scalar=14))`
+
+##### France
+- `print(workflow_compute_mvp(competition_name="ligue-1", competition_year="2024-2025", manual_competition_id="53"))`
+- `print(workflow_compute_mvp(competition_name="coupe-de-france", competition_year="2024-2025", scalar=14))`
+
+##### Germany
+- `print(workflow_compute_mvp(competition_name="bundesliga", competition_year="2024-2025", manual_competition_id="54"))`
+- `print(workflow_compute_mvp(competition_name="dfb-pokal", competition_year="2024-2025", scalar=14))`
+
+##### Italy
+- `print(workflow_compute_mvp(competition_name="serie", competition_year="2024-2025", manual_competition_id="55"))`
+- `print(workflow_compute_mvp(competition_name="coppa-italia", competition_year="2024-2025", scalar=14))`
+
+##### Mexico
+- `print(workflow_compute_mvp(competition_name="liga-mx", competition_year="2023-2024", open_close_league="Apertura"))`
+- `print(workflow_compute_mvp(competition_name="liga-mx", competition_year="2023-2024", open_close_league="Clausura"))`
+
+##### Netherlands
+- `print(workflow_compute_mvp(competition_name="eredivisie", competition_year="2024-2025", manual_competition_id="57"))`
+
+##### Saudi Arabia
+- `print(workflow_compute_mvp(competition_name="saudi-pro-league", competition_year="2024-2025"))`
+
+##### Scotland
+- `print(workflow_compute_mvp(competition_name="premiership", competition_year="2024-2025"))`
+
+##### Spain
+- `print(workflow_compute_mvp(competition_name="laliga", competition_year="2024-2025"))`
+- `print(workflow_compute_mvp(competition_name="copa-del-rey", competition_year="2024-2025", scalar=14))`
+
+##### USA
+- `print(workflow_compute_mvp(competition_name="mls", competition_year="2025"))`
+- `print(workflow_compute_mvp(competition_name="open-cup", competition_year="2025", scalar=14))`
+
+
+
         
     - Step-by-Step
         - List all available competitions (Note: if a competition is not available, include a defined_url arguement)
@@ -301,6 +334,11 @@ print(workflow_compute_mvp(competition_name="premier-league", competition_year="
             - print(mvp.compute_mvp(competition_name="mls", competition_year="2023", scalar=4))
 
 
+
+
+## Example Output
+
+![2023 MLS MVPs](mls_2023_mvp_results_image.png)
 
 
 
