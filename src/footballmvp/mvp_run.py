@@ -847,11 +847,38 @@ class Player:
         # Compute matches played per player
         matches_played_per_player = df.groupBy("player_id").count()
 
-        # Compute average SPI score per player
-        # NEW - Remove -1 values
-        # avg_spi_per_player = df.groupBy("player_id").agg(F.avg("spi_score").alias("avg_spi_score"))
+        # Count the spi_scores that ARE -1.0
+        # Count the spi_scores that are NOT -1.0
+
+        # if there are more -1.0 values that non -1.0 values, then skip this player entirely from being added to player analysis csv output
+
+
+        # # Compute average SPI score per player
+        # avg_spi_per_player = (
+        #     df.filter(F.col("spi_score") != -1.0)
+        #     .groupBy("player_id")
+        #     .agg(F.avg("spi_score").alias("avg_spi_score"))
+        # )
+
+
+        # Count -1.0 and non -1.0 spi_scores per player
+        player_counts = (
+            df.groupBy("player_id")
+            .agg(
+                F.sum(F.when(F.col("spi_score") == -1.0, 1).otherwise(0)).alias("count_invalid"),
+                F.sum(F.when(F.col("spi_score") != -1.0, 1).otherwise(0)).alias("count_valid")
+            )
+        )
+
+        # Filter players: keep only those where valid >= invalid
+        filtered_players = player_counts.filter(F.col("count_valid") >= F.col("count_invalid"))
+
+        # Join back to original df so only valid players remain
+        df_filtered = df.join(filtered_players.select("player_id"), on="player_id", how="inner")
+
+        # Compute average SPI score per player (ignoring -1.0)
         avg_spi_per_player = (
-            df.filter(F.col("spi_score") != -1.0)
+            df_filtered.filter(F.col("spi_score") != -1.0)
             .groupBy("player_id")
             .agg(F.avg("spi_score").alias("avg_spi_score"))
         )
@@ -1154,11 +1181,11 @@ def workflow_compute_mvp(competition_name: str, competition_year: int, scalar: i
 
 
 
-# if __name__ == "__main__":
-# #     # Workflow 1A - add a competetion
-#     all_comps = AllCompetitions()
-#     all_comp_info = all_comps.gather_all_competition_ids("https://www.fotmob.com/") # run
-#     print(all_comp_info)
+if __name__ == "__main__":
+#     # Workflow 1A - add a competetion
+    all_comps = AllCompetitions()
+    all_comp_info = all_comps.gather_all_competition_ids("https://www.fotmob.com/") # run
+    print(all_comp_info)
 
 # #     # Sample Test 1
 #     # print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
@@ -1173,3 +1200,5 @@ def workflow_compute_mvp(competition_name: str, competition_year: int, scalar: i
 #     print(all_comps.add_competition_to_my_watchlist(competition_name="mls", gather_all_competition_ids=all_comp_info))
 #     print(workflow_compute_mvp(competition_name="mls", competition_year="2025", scalar=4))
 
+    print(all_comps.add_competition_to_my_watchlist(competition_name="champions-league", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/42/matches/champions-league"))
+    print(workflow_compute_mvp(competition_name="champions-league", competition_year="2023-2024", scalar=14))
