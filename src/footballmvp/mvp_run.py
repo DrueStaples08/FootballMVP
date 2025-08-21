@@ -1197,8 +1197,7 @@ if __name__ == "__main__":
 # #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2018", manual_competition_id="77", scalar=14))
 # #     print(workflow_compute_mvp(competition_name="world-cup", competition_year="2022", manual_competition_id="77", scalar=14))
 
+# #     # Sample Test 3
 #     print(all_comps.add_competition_to_my_watchlist(competition_name="mls", gather_all_competition_ids=all_comp_info))
 #     print(workflow_compute_mvp(competition_name="mls", competition_year="2025", scalar=4))
 
-    print(all_comps.add_competition_to_my_watchlist(competition_name="champions-league", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/42/matches/champions-league"))
-    print(workflow_compute_mvp(competition_name="champions-league", competition_year="2023-2024", scalar=14))
