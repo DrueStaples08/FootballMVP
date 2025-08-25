@@ -22,11 +22,10 @@ from pyspark.sql.types import StructType, StringType, FloatType, StructField, In
 from pyspark.sql.functions import round as pyspark_round
 from pyspark.errors import AnalysisException
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
 import logging
 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 from pyspark.sql import SparkSession, functions as F
@@ -37,8 +36,6 @@ import json
 import re
 import time
 from typing import List, Dict
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
 
@@ -445,7 +442,9 @@ class Match:
             Extracts all player statistics from a given match URL using Selenium and BeautifulSoup.
     """
     def __init__(self):
-        pass
+        self.match_id = "pachuca-vs-botafogo-rj/27qfw0#4683429"
+        self.x_mas_value= self.get_x_mas(self.match_id)
+
 
 
 
@@ -593,13 +592,47 @@ class Match:
         logging.info("Player Stats have been saved successfully!")
         spark_sess.stop()
 
+    def get_x_mas(self,match_url_part):
+        x_mas = None
+
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
+        driver = webdriver.Chrome(options=chrome_options)
+
+        try:
+            driver.get(f"https://www.fotmob.com/matches/{match_url_part}")
+            time.sleep(5)
+
+            logs = driver.get_log("performance")
+            for entry in logs:
+                try:
+                    message = json.loads(entry.get("message", "{}")).get("message", {})
+                    if message.get("method") != "Network.requestWillBeSent":
+                        continue
+
+                    request = message.get("params", {}).get("request", {})
+                    headers = request.get("headers", {})
+                    if "x-mas" in headers:
+                        x_mas = headers["x-mas"]
+                        break
+                except json.JSONDecodeError:
+                    continue
+        finally:
+            driver.quit()
+
+        return x_mas
+
 
 
     def extract_single_match_players_stats(self, url: str, fallback:bool=False) -> List[Dict]:
+
         headers = {
             'sec-ch-ua-platform': '"macOS"',
             'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
-            'x-mas': 'eyJib2R5Ijp7InVybCI6Ii9hcGkvZGF0YS9tYXRjaERldGFpbHM/bWF0Y2hJZD00NjgzNDMwIiwiY29kZSI6MTc1NjAwODY2MzM2OCwiZm9vIjoicHJvZHVjdGlvbjo3MjU5NTAyZTRkMmYwOWY2NGFjOTBlMTBjN2M1NDM1N2Q4MjFlMTVmLXVuZGVmaW5lZCJ9LCJzaWduYXR1cmUiOiI5RTYyMDEwOUE5Q0I0OUI1NUIzQjgwREYwQ0RBODlFMiJ9',
+            'x-mas': self.x_mas_value,
             'sec-ch-ua': '"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
             'DNT': '1',
             'sec-ch-ua-mobile': '?0',
@@ -607,6 +640,7 @@ class Match:
         params = {
                 'matchId': f'{url.split("#")[1]}',
             }
+        print(f"Extracting player stats for match: {url}")
         response = requests.get('https://www.fotmob.com/api/data/matchDetails', params=params, headers=headers)
         player_stats: List[Dict] = []
 
@@ -1153,7 +1187,7 @@ if __name__ == "__main__":
 #     # Workflow 1A - add a competetion
     all_comps = AllCompetitions()
     all_comp_info = all_comps.gather_all_competition_ids("https://www.fotmob.com/") # run
-    # print(all_comp_info)
+    print(all_comp_info)
 
 # #     # Sample Test 1
     print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
