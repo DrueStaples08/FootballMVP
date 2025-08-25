@@ -22,11 +22,10 @@ from pyspark.sql.types import StructType, StringType, FloatType, StructField, In
 from pyspark.sql.functions import round as pyspark_round
 from pyspark.errors import AnalysisException
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
 import logging
 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 from pyspark.sql import SparkSession, functions as F
@@ -37,8 +36,6 @@ import json
 import re
 import time
 from typing import List, Dict
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
 
@@ -445,7 +442,9 @@ class Match:
             Extracts all player statistics from a given match URL using Selenium and BeautifulSoup.
     """
     def __init__(self):
-        pass
+        self.match_id = "pachuca-vs-botafogo-rj/27qfw0#4683429"
+        self.x_mas_value= self.get_x_mas(self.match_id)
+
 
 
 
@@ -556,6 +555,7 @@ class Match:
             logging.info(f"Processing {count}/{number_of_matches} matches: {match_link}")
 
             # Extract player stats
+            print(f"Extracting player stats for match: {match_link}")
             player_stats = self.extract_single_match_players_stats(match_link, fallback)
             logging.info(f"All player stats: {player_stats}")
 
@@ -592,95 +592,97 @@ class Match:
         logging.info("Player Stats have been saved successfully!")
         spark_sess.stop()
 
+    def get_x_mas(self,match_url_part):
+        x_mas = None
+
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
+        driver = webdriver.Chrome(options=chrome_options)
+
+        try:
+            driver.get(f"https://www.fotmob.com/matches/{match_url_part}")
+            time.sleep(5)
+
+            logs = driver.get_log("performance")
+            for entry in logs:
+                try:
+                    message = json.loads(entry.get("message", "{}")).get("message", {})
+                    if message.get("method") != "Network.requestWillBeSent":
+                        continue
+
+                    request = message.get("params", {}).get("request", {})
+                    headers = request.get("headers", {})
+                    if "x-mas" in headers:
+                        x_mas = headers["x-mas"]
+                        break
+                except json.JSONDecodeError:
+                    continue
+        finally:
+            driver.quit()
+
+        return x_mas
+
 
 
     def extract_single_match_players_stats(self, url: str, fallback:bool=False) -> List[Dict]:
-        options = Options()
-        options.add_argument("--headless")
-        driver = webdriver.Chrome(options=options)
-        driver.get(url + ":tab=stats")
-        time.sleep(5)
-        soup = BeautifulSoup(driver.page_source, "html.parser")
-        driver.quit()
 
+        headers = {
+            'sec-ch-ua-platform': '"macOS"',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36',
+            'x-mas': self.x_mas_value,
+            'sec-ch-ua': '"Not;A=Brand";v="99", "Google Chrome";v="139", "Chromium";v="139"',
+            'DNT': '1',
+            'sec-ch-ua-mobile': '?0',
+        }
+        params = {
+                'matchId': f'{url.split("#")[1]}',
+            }
+        print(f"Extracting player stats for match: {url}")
+        response = requests.get('https://www.fotmob.com/api/data/matchDetails', params=params, headers=headers)
         player_stats: List[Dict] = []
 
-        # Fallback HTML player table
-        fallback_rows = soup.find_all("tr", class_=re.compile(r"css-[\w\d]+-TableRowStyled"))
+        try:
+            # Safely get the list of starters
+            starters = response.json().get('content', {}).get('lineup', {}).get('homeTeam', {}).get('starters', [])
+        except Exception as e:
+            print(f"Error extracting starters: {e}")
+            return player_stats  # Return empty list if starters not found
 
-        for row in fallback_rows:
+        # Safely get playerStats dictionary
+        try:
+            player_stats_dict = response.json().get('content', {}).get('playerStats', {})
+        except Exception as e:
+            print(f"Error extracting playerStats: {e}")
+            player_stats_dict = {}
+
+        for item in starters:
             try:
-                name_span = row.find("span", class_=re.compile(r"css-[\w\d]+-PlayerName"))
-                if not name_span:
-                    continue
-                player_name = name_span.text.strip()
+                temp_item = {}
+                # Basic player info
+                temp_item['Player_Name'] = item.get('name', '')  
+                temp_item['Player_ID'] = item.get('id')          
+                # print(f"Player ID: {temp_item['player_id']}")
 
-                link = row.find("a")["href"]
-                player_id_match = re.search(r"player=(\d+)", link)
-                if not player_id_match:
-                    continue
-                player_id = player_id_match.group(1)
+                temp_item['Shirt_Number'] = str(item.get('shirtNumber', ''))  
+                temp_item['Country'] = item.get('countryName', '')           
 
-                rating_div = row.find("div", class_=re.compile(r"css-[\w\d]+-PlayerRatingCSS"))
-                spi_rating = rating_div.text.strip() if rating_div else None
+                # SPI rating: defaults to -1.0 if performance or rating is missing
+                temp_item['SPI_Score'] = item.get('performance', {}).get('rating', -1.0)
 
+                # Team name: safely retrieve from playerStats dict, default to 'Unknown'
+                team_name = player_stats_dict.get(str(item.get('id')), {}).get('teamName', 'Unknown')
+                temp_item['Team_Name'] = team_name
 
-                # Check for minutes played 
-                if not spi_rating:
-                    # continue
-                    spi_rating = "-1.0"
-                """
-                # Replace above with below
-
-                if minutues_played:
-                    if not spi_rating:
-                        spi_rating = -1
-                else:
-                    continue
-
-                 # I don't need minutes played since everyone in the stats tab has minutes played   
-
-                """
-
-                # Default metadata values
-                shirt_number, team_name, country = "NA", "NA", "NA"
-
-                # Extract metadata from embedded JSON
-                for tag in soup.find_all("script"):
-                    if tag.string and 'lineup' in tag.string:
-                        try:
-                            match = re.search(r'"lineup":({.*?}),"hasPlayoff"', tag.string)
-                            if match:
-                                lineup = json.loads(match.group(1))
-                                for team_key in ['homeTeam', 'awayTeam']:
-                                    team = lineup.get(team_key, {})
-                                    team_name = team.get("name", "NA")
-                                    for role in ['starters', 'subs']:
-                                        for player in team.get(role, []):
-                                            if str(player.get("id")) == player_id:
-                                                shirt_number = player.get("shirtNumber", "NA")
-                                                country = player.get("countryName", "NA")
-                                                raise StopIteration
-                        except StopIteration:
-                            break
-                        except Exception as e:
-                            logging.warning(f"JSON extraction error: {e}")
-
-                player_stats.append({
-                    "Player_ID": player_id,
-                    "Player_Name": player_name,
-                    "Shirt_Number": shirt_number,
-                    "Country": country,
-                    "Team_Name": team_name,
-                    "SPI_Score": spi_rating
-                })
-
-                logging.info(f"{player_name} | {team_name} | {country} | Rating: {spi_rating}")
+                player_stats.append(temp_item)
 
             except Exception as e:
-                logging.warning(f"Error parsing fallback row: {e}")
-                continue
+                print(f"Error processing player {item.get('id', 'Unknown')}: {e}")
+                continue  
 
+        print("Player stats ****", player_stats)
         return player_stats
 
 
@@ -1188,8 +1190,8 @@ if __name__ == "__main__":
     print(all_comp_info)
 
 # #     # Sample Test 1
-#     # print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
-#     # print(workflow_compute_mvp(competition_name="fifa-intercontinental-cup", competition_year="2024", scalar=14))
+    print(all_comps.add_competition_to_my_watchlist(competition_name="fifa-intercontinental-cup", gather_all_competition_ids=all_comp_info))
+    print(workflow_compute_mvp(competition_name="fifa-intercontinental-cup", competition_year="2024", scalar=14))
 
 # #     # Sample Test 2
 # #     print(all_comps.add_competition_to_my_watchlist(competition_name="world-cup", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/77/matches/world-cup"))#     # print(workflow_compute_mvp(competition_name="world-cup", competition_year="2010", manual_competition_id="77", scalar=14, min_req_matches=False))
