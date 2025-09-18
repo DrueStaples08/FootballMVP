@@ -1,81 +1,102 @@
-FootballMVP
-An analytics program to find the top-performing players (MVPs) in football leagues and tournaments.
+# footballmvp Analyzer?
 
-What is Soccer MVP Analyzer?
 This project calculates the Most Valuable Player (MVP) for professional football leagues and tournaments using player performance statistics.
 
-Think of it as a custom analytics engine that scrapes, cleans, processes, and visualizes soccer player data to answer:
+Think of it as a custom analytics engine that scrapes, cleans, processes, and visualizes football player data to answer:
 
-"Who’s really been the MVP this season?"
+"Who’s really been the MVP this season?
 
-Getting Started
+## Getting Started
 1. Clone the Project
-Choose your workflow:
+    - Choose your workflow:
 
-Option A: Clone (For contributors)
-git clone https://github.com/DrueStaples08/FootballMVP
-
-
-Option B: Fork (For contributors)
-Fork the repo on GitHub, then clone your fork:
-git clone https://github.com/DrueStaples08/FootballMVP
+        - Option A: Clone (For contributors)
+            ```python 
+            git clone https://github.com/DrueStaples08/FootballMVP
+            ```
 
 
-Option C: Install via pip (For developers)
-pip install FootballMVP
-pip install -r requirements.txt
-python mvp_comp_dir/mvp_run.py
+        - Option B: Fork (For contributors)
+            - Fork the repo on GitHub, then clone your fork:
+                ```python 
+                git clone https://github.com/DrueStaples08/FootballMVP
+                ```
+
+
+        - Option C: Install via pip (For developers)
+            ```python 
+            pip install FootballMVP
+            ```
+            ```python 
+            pip install -r requirements.txt
+            ```
+            ```python 
+            python mvp_comp_dir/mvp_run.py
+            ```
 
 
 2. Setup Your Environment
-Python Version: 3.12 (Required)
+    - Python Version: 3.12 (Required)
 
-Install dependencies:
-pip install -r requirements.txt
-Using pyenv (recommended):
-pyenv install 3.12.4
-pyenv virtualenv 3.12.4 soccer-mvp-env
-pyenv activate soccer-mvp-env
-pip install -r requirements.txt
-Troubleshooting:
-If you see ModuleNotFoundError: No module named 'distutils', run:
-pip install setuptools
+    - Install dependencies:
+    ```python 
+    pip install -r requirements.txt
+    ```
+
+    - Using pyenv (recommended):
+        ```python 
+        pyenv install 3.12.4
+        ```
+        ```python 
+        pyenv virtualenv 3.12.4 soccer-mvp-env
+        ```
+        ```python 
+        pyenv activate soccer-mvp-env
+        ```
+        ```python 
+        pip install -r requirements.txt
+        ```
+
+    - Troubleshooting:
+        - If you see ModuleNotFoundError: No module named 'distutils', run:
+            ```python
+            pip install setuptools
+            ```
 
 
 3. Install Java (Needed for PySpark)
-Install Java 17:
-brew install openjdk@17
-Verify Java version:
-java --version
-Link Java with Homebrew:
+    - Install Java 17:
+        - brew install openjdk@17
+    - Verify Java version:
+        - java --version
+    - Link Java with Homebrew:
+        - sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+    - Add this below your shell config (.zshrc or .bashrc):
 
+        export PYENV_ROOT="$HOME/.pyenv"
 
-sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
-Add to your shell config (.zshrc or .bashrc):
+        export PATH="$PYENV_ROOT/bin:$PATH"
+
+        eval "$(pyenv init --path)"
+
+        eval "$(pyenv init -)"
+
+        eval "$(pyenv virtualenv-init -)"
+
+        export JAVA_HOME="/opt/homebrew/opt/openjdk@17"
+
+        export PATH="$JAVA_HOME/bin:$PATH"
+
+    - Reload your shell:
+
+        ```python 
+        source ~/.zshrc
+        ```
+
 
 ---
 
-Pyenv setup
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/bin:$PATH"
-
-Initialize pyenv and pyenv-virtualenv
-eval "$(pyenv init --path)"
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-
-Java setup for PySpark (force Java 17)
-export JAVA_HOME="/opt/homebrew/opt/openjdk@11"
-export PATH="$JAVA_HOME/bin:$PATH"
-Reload your shell:
-
-
-source ~/.zshrc
-
-
----
-
-### 3. Input Parameters (Function Call)
+## Input Parameters (Function Call)
 
 ```python
 def compute_mvp(
@@ -90,77 +111,81 @@ def compute_mvp(
 ) -> str:
 ```
 
+
 ---
 
+## Common Workflows & Examples
 
-### Add Competition to Watchlist
+- All examples assume:
 
-* If already in list:
+    ```python 
+    from FootballMVP import AllCompetitions, Competition, Match, Player, MVP, workflow_compute_mvp
+    ```
 
-```python
-print(all_comps.add_competition_to_my_watchlist(competition_name="mls", gather_all_competition_ids=all_comp_info))
-```
+- Bootstrap: list competitions and add a watchlist entry
+    all_comps = AllCompetitions()
+    all_comp_info = all_comps.gather_all_competition_ids("https://www.fotmob.com/leagues")  # run
+    print(all_comp_info)  # dict: {id: normalized_name}
 
-* If NOT in list (custom URL):
+- Add by normalized name (if present)
+    print(all_comps.add_competition_to_my_watchlist(
+        competition_name="open-cup",
+        gather_all_competition_ids=all_comp_info
+    ))
 
-```python
-print(all_comps.add_competition_to_my_watchlist(
-    competition_name="", 
-    gather_all_competition_ids=all_comp_info, 
-    defined_url="https://www.fotmob.com/leagues/55/matches/serie"
-))
-```
+- Or add by explicit URL (if not present or to disambiguate)
+    print(all_comps.add_competition_to_my_watchlist(
+        competition_name="",
+        gather_all_competition_ids=all_comp_info,
+        defined_url="https://www.fotmob.com/leagues/47/matches/premier-league"
+    ))
 
-### Run with optional arguements:
+- Minimal end-to-end run (MVP workflow)
+    print(workflow_compute_mvp(competition_name="mls", competition_year="2025"))
 
-#### Only Required Params:
+- Custom scalar / title / percentile
+    mvp = MVP()
+    print(mvp.compute_mvp(
+        competition_name="serie",
+        competition_year="2024-2025",
+        percentile_threshold=.97,
+        title="Top 3% MVPs for Serie in 2024-2025"
+    ))
 
-```python
-print(workflow_compute_mvp(competition_name="mls", competition_year="2023"))
-print(workflow_compute_mvp(competition_name="serie", competition_year="2024-2025"))
-```
+- Split seasons (Apertura/Clausura)
+    print(workflow_compute_mvp(
+        competition_name="liga-mx",
+        competition_year="2024-2025",
+        open_close_league="Apertura"
+    ))
+    print(workflow_compute_mvp(
+        competition_name="liga-mx",
+        competition_year="2024-2025",
+        open_close_league="Clausura"
+    ))
 
-#### Custom Scalar
+- Resume runs (no override)
+    print(workflow_compute_mvp(
+        competition_name="canadian-championship",
+        competition_year="2025",
+        overide=False
+    ))
 
-```python
-print(mvp.compute_mvp(competition_name="fifa-intercontinental-cup", competition_year="2024", scalar=14))
-```
+- Manual competition id (disambiguate leagues)
+    - Premier League (England)
+        print(workflow_compute_mvp(
+            competition_name="premier-league",
+            competition_year="2016-2017",
+            manual_competition_id="47"
+        ))
 
-#### Two Leagues Per Year
+    - Premier League (Canada)
+        print(workflow_compute_mvp(
+            competition_name="premier-league",
+            competition_year="2019",
+            manual_competition_id="9986"
+        ))
 
-```python
-print(workflow_compute_mvp(competition_name="liga-mx", competition_year="2024-2025", open_close_league="Apertura"))
-print(workflow_compute_mvp(competition_name="liga-mx", competition_year="2024-2025", open_close_league="Clausura"))
-```
-
-#### Memoization Without Override
-
-```python
-print(workflow_compute_mvp(competition_name="canadian-championship", competition_year="2025", overide=False))
-```
-
-#### Custom Table Title
-
-```python
-print(workflow_compute_mvp(competition_name="concacaf-champions-cup", competition_year="2025", title="Top Performing Players for North American Football Clubs"))
-```
-
-#### Custom Percentile Threshold
-
-```python
-mvp = MVP()
-print(mvp.compute_mvp(competition_name="serie", competition_year="2024-2025", percentile_threshold=.97, title="Top 3% MVPs for Serie-A in 2024-2025"))
-```
-
-#### Use Manual Competition ID
-
-```python
-print(all_comps.add_competition_to_my_watchlist(competition_name="", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/47/matches/premier-league"))
-print(workflow_compute_mvp(competition_name="premier-league", competition_year="2016-2017", manual_competition_id="47"))
-
-print(all_comps.add_competition_to_my_watchlist(competition_name="", gather_all_competition_ids=all_comp_info, defined_url="https://www.fotmob.com/leagues/9986/matches/premier-league"))
-print(workflow_compute_mvp(competition_name="premier-league", competition_year="2019", manual_competition_id="9986"))
-```
 
 ## Sample Code:
 
@@ -375,9 +400,7 @@ Resource:
 ---
 
 ### Potential Contributions:
-- Add a CI/CD pipeline (e.g. Github Actions - pytest, flake8, isort, black, docker build)
-- Cloud data storage functionality
-- Unit Tests
+- Add an option for storing results in a Cloud data storage 
 
 ### Possibilites to optimize the MVP algorithm
 - Add more weighted features:
