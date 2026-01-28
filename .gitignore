@@ -31,6 +31,8 @@ MANIFEST
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
 *.manifest
 *.spec
+*.pdf
+*.csv
 
 # Installer logs
 pip-log.txt
@@ -208,3 +210,9 @@ __marimo__/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
+match_details.json
+all_comps_df/.part-00000-df79ecef-eb16-4738-b3bd-3f754846158d-c000.csv.crc
+all_comps_df/.part-00007-df79ecef-eb16-4738-b3bd-3f754846158d-c000.csv.crc
+all_comps_df/_SUCCESS
+all_comps_df/._SUCCESS.crc
+Pipfile

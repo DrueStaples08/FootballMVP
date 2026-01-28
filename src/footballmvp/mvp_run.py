@@ -22,11 +22,10 @@ from pyspark.sql.types import StructType, StringType, FloatType, StructField, In
 from pyspark.sql.functions import round as pyspark_round
 from pyspark.errors import AnalysisException
 
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-
 import logging
 
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 
 
 from pyspark.sql import SparkSession, functions as F
@@ -37,8 +36,6 @@ import json
 import re
 import time
 from typing import List, Dict
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 
 
@@ -668,7 +665,13 @@ class Match:
         logging.info("Player Stats have been saved successfully!")
         spark_sess.stop()
 
+    def get_x_mas(self,match_url_part):
+        x_mas = None
 
+        chrome_options = Options()
+        chrome_options.add_argument("--headless")
+        chrome_options.add_argument("--disable-gpu")
+        chrome_options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
     def extract_single_match_players_stats(self, url: str) -> List[Dict]:
         """Scrape the Stats tab for a single match and return player stats.
@@ -706,69 +709,49 @@ class Match:
 
         player_stats: List[Dict] = []
 
-        # Fallback HTML player table
-        fallback_rows = soup.find_all("tr", class_=re.compile(r"css-[\w\d]+-TableRowStyled"))
+        try:
+            driver.get(f"https://www.fotmob.com/matches/{match_url_part}")
+            time.sleep(5)
 
-        for row in fallback_rows:
-            try:
-                name_span = row.find("span", class_=re.compile(r"css-[\w\d]+-PlayerName"))
-                if not name_span:
+            logs = driver.get_log("performance")
+            for entry in logs:
+                try:
+                    message = json.loads(entry.get("message", "{}")).get("message", {})
+                    if message.get("method") != "Network.requestWillBeSent":
+                        continue
+
+                    request = message.get("params", {}).get("request", {})
+                    headers = request.get("headers", {})
+                    if "x-mas" in headers:
+                        x_mas = headers["x-mas"]
+                        break
+                except json.JSONDecodeError:
                     continue
-                player_name = name_span.text.strip()
+        finally:
+            driver.quit()
 
-                link = row.find("a")["href"]
-                player_id_match = re.search(r"player=(\d+)", link)
-                if not player_id_match:
-                    continue
-                player_id = player_id_match.group(1)
+        return x_mas
 
-                rating_div = row.find("div", class_=re.compile(r"css-[\w\d]+-PlayerRatingCSS"))
-                spi_rating = rating_div.text.strip() if rating_div else None
 
                 # Check for minutes played 
                 if not spi_rating:
                     # continue
                     spi_rating = "-1.0"
 
-                # Default metadata values
-                shirt_number, team_name, country = "NA", "NA", "NA"
+                # SPI rating: defaults to -1.0 if performance or rating is missing
+                temp_item['SPI_Score'] = item.get('performance', {}).get('rating', -1.0)
 
-                # Extract metadata from embedded JSON
-                for tag in soup.find_all("script"):
-                    if tag.string and 'lineup' in tag.string:
-                        try:
-                            match = re.search(r'"lineup":({.*?}),"hasPlayoff"', tag.string)
-                            if match:
-                                lineup = json.loads(match.group(1))
-                                for team_key in ['homeTeam', 'awayTeam']:
-                                    team = lineup.get(team_key, {})
-                                    team_name = team.get("name", "NA")
-                                    for role in ['starters', 'subs']:
-                                        for player in team.get(role, []):
-                                            if str(player.get("id")) == player_id:
-                                                shirt_number = player.get("shirtNumber", "NA")
-                                                country = player.get("countryName", "NA")
-                                                raise StopIteration
-                        except StopIteration:
-                            break
-                        except Exception as e:
-                            logging.warning(f"JSON extraction error: {e}")
+                # Team name: safely retrieve from playerStats dict, default to 'Unknown'
+                team_name = player_stats_dict.get(str(item.get('id')), {}).get('teamName', 'Unknown')
+                temp_item['Team_Name'] = team_name
 
-                player_stats.append({
-                    "Player_ID": player_id,
-                    "Player_Name": player_name,
-                    "Shirt_Number": shirt_number,
-                    "Country": country,
-                    "Team_Name": team_name,
-                    "SPI_Score": spi_rating
-                })
-
-                logging.info(f"{player_name} | {team_name} | {country} | Rating: {spi_rating}")
+                player_stats.append(temp_item)
 
             except Exception as e:
-                logging.warning(f"Error parsing fallback row: {e}")
-                continue
+                print(f"Error processing player {item.get('id', 'Unknown')}: {e}")
+                continue  
 
+        print("Player stats ****", player_stats)
         return player_stats
 
 
